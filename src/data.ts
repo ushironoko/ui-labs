@@ -65,8 +65,47 @@ const CARDS: CardData[] = [
   },
 ];
 
+export type FieldPromises = {
+  value: Promise<string>;
+  description: Promise<string>;
+};
+
+export type PatternProps = {
+  items: { card: CardData; promise: Promise<CardData> }[];
+  nested: boolean;
+  randomize: boolean;
+};
+
 let generation = 0;
 const cache = new Map<string, Promise<CardData>>();
+const fieldCache = new Map<string, Promise<string>>();
+
+function delayedString(value: string, ms: number): Promise<string> {
+  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
+}
+
+export function getFieldPromises(
+  cardId: string,
+  card: CardData,
+  randomize: boolean,
+): FieldPromises {
+  const vKey = `fv-${cardId}-${generation}`;
+  const dKey = `fd-${cardId}-${generation}`;
+
+  if (!fieldCache.has(vKey)) {
+    const d = randomize ? Math.random() * 1000 + 200 : 400;
+    fieldCache.set(vKey, delayedString(card.value, d));
+  }
+  if (!fieldCache.has(dKey)) {
+    const d = randomize ? Math.random() * 1000 + 500 : 800;
+    fieldCache.set(dKey, delayedString(card.description, d));
+  }
+
+  return {
+    value: fieldCache.get(vKey) as Promise<string>,
+    description: fieldCache.get(dKey) as Promise<string>,
+  };
+}
 
 function createDelayedPromise(
   data: CardData,

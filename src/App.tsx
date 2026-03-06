@@ -44,6 +44,7 @@ const PATTERN_COMPONENTS = {
 export function App() {
   const [pattern, setPattern] = useState<PatternKey>("popcorn");
   const [randomize, setRandomize] = useState(false);
+  const [nested, setNested] = useState(false);
   const [generation, setGeneration] = useState(0);
 
   const handleReset = useCallback(() => {
@@ -95,12 +96,28 @@ export function App() {
           />
           ランダム遅延
         </label>
+        <label className="toggle-label">
+          <input
+            type="checkbox"
+            checked={nested}
+            onChange={(e) => {
+              setNested(e.target.checked);
+              handleReset();
+            }}
+          />
+          ネスト遅延
+        </label>
         <button type="button" className="reset-btn" onClick={handleReset}>
           Reset
         </button>
       </div>
 
-      <PatternComponent key={generation} items={items} />
+      <PatternComponent
+        key={generation}
+        items={items}
+        nested={nested}
+        randomize={randomize}
+      />
     </div>
   );
 }

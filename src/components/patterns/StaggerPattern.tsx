@@ -8,8 +8,10 @@ import {
   useRef,
   useState,
 } from "react";
-import type { CardData } from "../../data.ts";
+import type { CardData, PatternProps } from "../../data.ts";
+import { getFieldPromises } from "../../data.ts";
 import { Card } from "../Card.tsx";
+import { NestedCard } from "../NestedCard.tsx";
 import { SkeletonCard } from "../SkeletonCard.tsx";
 
 type StaggerContextValue = {
@@ -26,10 +28,27 @@ function StaggerProvider({ children }: { children: React.ReactNode }) {
   return <StaggerContext value={{ getIndex }}>{children}</StaggerContext>;
 }
 
-function StaggerCard({ promise }: { promise: Promise<CardData> }) {
+function StaggerCard({
+  promise,
+  nested,
+  randomize,
+}: {
+  promise: Promise<CardData>;
+  nested: boolean;
+  randomize: boolean;
+}) {
   const data = use(promise);
   const { getIndex } = useContext(StaggerContext);
   const [index] = useState(() => getIndex());
+
+  const content = nested ? (
+    <NestedCard
+      data={data}
+      fields={getFieldPromises(data.id, data, randomize)}
+    />
+  ) : (
+    <Card data={data} />
+  );
 
   return (
     <motion.div
@@ -41,22 +60,22 @@ function StaggerCard({ promise }: { promise: Promise<CardData> }) {
         ease: [0.22, 1, 0.36, 1],
       }}
     >
-      <Card data={data} />
+      {content}
     </motion.div>
   );
 }
 
-export function StaggerPattern({
-  items,
-}: {
-  items: { card: CardData; promise: Promise<CardData> }[];
-}) {
+export function StaggerPattern({ items, nested, randomize }: PatternProps) {
   return (
     <StaggerProvider>
       <div className="grid">
         {items.map(({ card, promise }) => (
           <Suspense key={card.id} fallback={<SkeletonCard />}>
-            <StaggerCard promise={promise} />
+            <StaggerCard
+              promise={promise}
+              nested={nested}
+              randomize={randomize}
+            />
           </Suspense>
         ))}
       </div>

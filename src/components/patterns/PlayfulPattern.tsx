@@ -1,7 +1,9 @@
 import { motion } from "motion/react";
 import { Suspense, use } from "react";
-import type { CardData } from "../../data.ts";
+import type { CardData, PatternProps } from "../../data.ts";
+import { getFieldPromises } from "../../data.ts";
 import { Card } from "../Card.tsx";
+import { NestedCard } from "../NestedCard.tsx";
 import { SkeletonCard } from "../SkeletonCard.tsx";
 
 const VARIANTS = [
@@ -34,12 +36,25 @@ const VARIANTS = [
 function PlayfulCard({
   promise,
   index,
+  nested,
+  randomize,
 }: {
   promise: Promise<CardData>;
   index: number;
+  nested: boolean;
+  randomize: boolean;
 }) {
   const data = use(promise);
   const variant = VARIANTS[index % VARIANTS.length];
+
+  const content = nested ? (
+    <NestedCard
+      data={data}
+      fields={getFieldPromises(data.id, data, randomize)}
+    />
+  ) : (
+    <Card data={data} />
+  );
 
   return (
     <motion.div
@@ -56,22 +71,23 @@ function PlayfulCard({
         className="card-glow"
         style={{ "--glow-color": `${data.color}55` } as React.CSSProperties}
       >
-        <Card data={data} />
+        {content}
       </div>
     </motion.div>
   );
 }
 
-export function PlayfulPattern({
-  items,
-}: {
-  items: { card: CardData; promise: Promise<CardData> }[];
-}) {
+export function PlayfulPattern({ items, nested, randomize }: PatternProps) {
   return (
     <div className="grid">
       {items.map(({ card, promise }, i) => (
         <Suspense key={card.id} fallback={<SkeletonCard playful />}>
-          <PlayfulCard promise={promise} index={i} />
+          <PlayfulCard
+            promise={promise}
+            index={i}
+            nested={nested}
+            randomize={randomize}
+          />
         </Suspense>
       ))}
     </div>
