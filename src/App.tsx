@@ -1,11 +1,25 @@
 import { useCallback, useState } from "react";
 import { FadePattern } from "./components/patterns/FadePattern.tsx";
+import { FlipPattern } from "./components/patterns/FlipPattern.tsx";
+import { MorphPattern } from "./components/patterns/MorphPattern.tsx";
 import { PlayfulPattern } from "./components/patterns/PlayfulPattern.tsx";
 import { PopcornPattern } from "./components/patterns/PopcornPattern.tsx";
+import { RevealPattern } from "./components/patterns/RevealPattern.tsx";
+import { RipplePattern } from "./components/patterns/RipplePattern.tsx";
 import { StaggerPattern } from "./components/patterns/StaggerPattern.tsx";
+import { TypewriterPattern } from "./components/patterns/TypewriterPattern.tsx";
 import { getCardPromises, resetCache } from "./data.ts";
 
-type PatternKey = "popcorn" | "fade" | "stagger" | "playful";
+type PatternKey =
+  | "popcorn"
+  | "fade"
+  | "stagger"
+  | "playful"
+  | "reveal"
+  | "flip"
+  | "ripple"
+  | "typewriter"
+  | "morph";
 
 const PATTERNS: { key: PatternKey; label: string; description: string }[] = [
   {
@@ -32,6 +46,36 @@ const PATTERNS: { key: PatternKey; label: string; description: string }[] = [
     description:
       "スプリング物理 + ランダムバリアント。バウンス・回転・スケールで楽しい表現。",
   },
+  {
+    key: "reveal",
+    label: "Reveal",
+    description:
+      "clipPath幕開け演出。カード中心から外側へclipPathが広がり、ブラーが解除される。レイアウトシフトゼロ。",
+  },
+  {
+    key: "flip",
+    label: "Flip",
+    description:
+      "3DカードフリップY軸回転。回転角に連動してbrightness/shadowが動的変化。カードめくりメタファー。",
+  },
+  {
+    key: "ripple",
+    label: "Ripple",
+    description:
+      "解決波紋連鎖。カード解決時、表示済みの他カードに微小pulseが連鎖。カード間に因果関係を作る。",
+  },
+  {
+    key: "typewriter",
+    label: "Typewriter",
+    description:
+      "variants + staggerChildrenによるカード内段階構築。icon→title→value→descが上から順にフェードイン。",
+  },
+  {
+    key: "morph",
+    label: "Morph",
+    description:
+      "AnimatePresenceによるスケルトン退場アニメーション。スケルトンがblur+scale downで退場→コンテンツが入場。",
+  },
 ];
 
 const PATTERN_COMPONENTS = {
@@ -39,6 +83,11 @@ const PATTERN_COMPONENTS = {
   fade: FadePattern,
   stagger: StaggerPattern,
   playful: PlayfulPattern,
+  reveal: RevealPattern,
+  flip: FlipPattern,
+  ripple: RipplePattern,
+  typewriter: TypewriterPattern,
+  morph: MorphPattern,
 } as const;
 
 export function App() {
