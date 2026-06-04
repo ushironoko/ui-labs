@@ -273,3 +273,125 @@ body {
     box-shadow: 0 0 0 0 transparent;
   }
 }
+
+/* ===== Suspense Isolation PoC ===== */
+.view-switch {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 28px;
+}
+
+.isolation-lab {
+  display: flex;
+  flex-direction: column;
+}
+
+.poc-parent {
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.poc-parent-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.poc-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.poc-btn {
+  padding: 8px 18px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.poc-btn:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.poc-children {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.poc-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.poc-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.poc-box-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.poc-box-row {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.poc-box-muted {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.poc-render-badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  animation: render-flash 0.6s ease-out;
+}
+
+.poc-render-badge-loading {
+  color: #f59e0b;
+  border-color: #f59e0b;
+}
+
+@keyframes render-flash {
+  0% {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  100% {
+    background: var(--surface-hover);
+    color: var(--text-muted);
+    border-color: var(--border);
+  }
+}
+
+.poc-fallback {
+  animation: pulse-glow 1.2s ease-in-out infinite alternate;
+}
+
+.poc-note {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
