@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { IsolationLab } from "./components/isolation/IsolationLab.tsx";
 import { FadePattern } from "./components/patterns/FadePattern.tsx";
 import { FlipPattern } from "./components/patterns/FlipPattern.tsx";
 import { MorphPattern } from "./components/patterns/MorphPattern.tsx";
@@ -91,6 +92,7 @@ const PATTERN_COMPONENTS = {
 } as const;
 
 export function App() {
+  const [view, setView] = useState<"patterns" | "isolation">("patterns");
   const [pattern, setPattern] = useState<PatternKey>("popcorn");
   const [randomize, setRandomize] = useState(false);
   const [nested, setNested] = useState(false);
@@ -114,59 +116,86 @@ export function App() {
         <p>Popcorn UI vs Animated Transitions</p>
       </header>
 
-      <div className="controls">
-        {PATTERNS.map((p) => (
-          <button
-            type="button"
-            key={p.key}
-            className="tab"
-            data-active={pattern === p.key}
-            onClick={() => {
-              setPattern(p.key);
-              handleReset();
-            }}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="pattern-description">{currentPattern.description}</div>
-
-      <div className="options">
-        <label className="toggle-label">
-          <input
-            type="checkbox"
-            checked={randomize}
-            onChange={(e) => {
-              setRandomize(e.target.checked);
-              handleReset();
-            }}
-          />
-          ランダム遅延
-        </label>
-        <label className="toggle-label">
-          <input
-            type="checkbox"
-            checked={nested}
-            onChange={(e) => {
-              setNested(e.target.checked);
-              handleReset();
-            }}
-          />
-          ネスト遅延
-        </label>
-        <button type="button" className="reset-btn" onClick={handleReset}>
-          Reset
+      <div className="view-switch">
+        <button
+          type="button"
+          className="tab"
+          data-active={view === "patterns"}
+          onClick={() => setView("patterns")}
+        >
+          Patterns
+        </button>
+        <button
+          type="button"
+          className="tab"
+          data-active={view === "isolation"}
+          onClick={() => setView("isolation")}
+        >
+          Suspense Isolation PoC
         </button>
       </div>
 
-      <PatternComponent
-        key={generation}
-        items={items}
-        nested={nested}
-        randomize={randomize}
-      />
+      {view === "isolation" ? (
+        <IsolationLab />
+      ) : (
+        <>
+          <div className="controls">
+            {PATTERNS.map((p) => (
+              <button
+                type="button"
+                key={p.key}
+                className="tab"
+                data-active={pattern === p.key}
+                onClick={() => {
+                  setPattern(p.key);
+                  handleReset();
+                }}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="pattern-description">
+            {currentPattern.description}
+          </div>
+
+          <div className="options">
+            <label className="toggle-label">
+              <input
+                type="checkbox"
+                checked={randomize}
+                onChange={(e) => {
+                  setRandomize(e.target.checked);
+                  handleReset();
+                }}
+              />
+              ランダム遅延
+            </label>
+            <label className="toggle-label">
+              <input
+                type="checkbox"
+                checked={nested}
+                onChange={(e) => {
+                  setNested(e.target.checked);
+                  handleReset();
+                }}
+              />
+              ネスト遅延
+            </label>
+            <button type="button" className="reset-btn" onClick={handleReset}>
+              Reset
+            </button>
+          </div>
+
+          <PatternComponent
+            key={generation}
+            items={items}
+            nested={nested}
+            randomize={randomize}
+          />
+        </>
+      )}
     </div>
   );
 }
